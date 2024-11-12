@@ -1,15 +1,15 @@
 
 # Telegram Escape Bot
 
-Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der Entwicklern die Möglichkeit gibt, ihre eigenen Rätsel und Inhalte hinzuzufügen. Dieser Bot stellt die Grundstruktur bereit, um Teilnehmer durch ein spannendes, interaktives Abenteuer zu führen.
+Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der als Systemdienst eingerichtet werden kann. Der Bot läuft automatisch auf einem Server oder Raspberry Pi und lässt sich bequem über `systemctl` starten, stoppen und neustarten.
 
 ## Funktionen
 
-- **Rätselverwaltung**: Eine einfache Struktur, um eigene Rätsel zu erstellen und zu integrieren.
-- **Teamnamen-Funktion**: Spieler können sich vor Spielbeginn einen Teamnamen geben.
-- **Hinweis- und Hilfefunktion**: Der Bot kann den Spielern entweder automatisch nach einer festgelegten Zeitspanne Hinweise geben oder den Spielern auf Anfrage über den `/help`-Befehl helfen.
-- **Zeitmessung**: Misst die benötigte Zeit, um das Spiel abzuschließen, und zeigt die Gesamtdauer am Ende an.
-- **Abschlussevaluation**: Zeigt eine Zusammenfassung des Spiels mit Teamname, Spieldauer und anderen Details.
+- **Systemdienst-Steuerung**: Einfache Steuerung über `systemctl` für automatischen Start, Stop und Neustart des Bots.
+- **Rätselverwaltung**: Unterstützt die Erstellung und Verwaltung eigener Rätsel.
+- **Teamnamen-Funktion**: Die Spieler können vor Spielbeginn einen Teamnamen festlegen.
+- **Hinweis- und Hilfefunktion**: Der Bot kann automatische Hinweise nach einer festgelegten Zeitspanne senden oder den Spielern auf Anfrage über den `/help`-Befehl helfen.
+- **Zeitmessung und Abschlussevaluation**: Misst die Spieldauer und zeigt sie in einer abschließenden Zusammenfassung an.
 
 ## Voraussetzungen
 
@@ -18,15 +18,15 @@ Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der Entwicklern d
 
 ## Installation
 
+### Schritt 1: Repository klonen und virtuelle Umgebung einrichten
+
 1. **Repository klonen**:
-   Klone das Repository in das gewünschte Verzeichnis auf deinem Computer:
    ```bash
    git clone https://github.com/rezgua1977/Telegram-Escape-Bot.git
    cd Telegram-Escape-Bot
    ```
 
 2. **Virtuelle Umgebung einrichten und aktivieren**:
-   Erstelle eine virtuelle Umgebung und aktiviere sie:
    ```bash
    python -m venv venv
    source venv/bin/activate   # Für Linux/macOS
@@ -34,49 +34,111 @@ Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der Entwicklern d
    ```
 
 3. **Abhängigkeiten installieren**:
-   Installiere die erforderlichen Python-Pakete:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Umgebungsvariablen konfigurieren**:
-   Erstelle eine `.env`-Datei im Projektordner und füge deinen Bot-Token hinzu:
-   ```plaintext
-   BOT_TOKEN=DeinBotTokenHier
-   ```
-   Ersetze `DeinBotTokenHier` durch den tatsächlichen Bot-Token, den du von BotFather erhalten hast.
+### Schritt 2: Umgebungsvariablen konfigurieren
 
-## Nutzung
+Erstelle eine `.env`-Datei im Projektordner und füge deinen Bot-Token hinzu:
 
-1. **Bot starten**:
-   Starte den Bot, indem du den folgenden Befehl im Terminal ausführst:
+```plaintext
+BOT_TOKEN=DeinBotTokenHier
+```
+
+Ersetze `DeinBotTokenHier` durch den tatsächlichen Token, den du von BotFather erhalten hast.
+
+### Schritt 3: Konfigurationsdatei `config.py` erstellen
+
+Erstelle die Datei `config.py` im Hauptverzeichnis des Projekts mit folgendem Inhalt:
+
+```python
+import os
+from dotenv import load_dotenv
+
+# Definiere den Pfad zur .env-Datei und lade die Umgebungsvariablen
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+
+# Prüfe, ob die .env-Datei vorhanden ist und lade sie
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+    print("Umgebungsvariablen wurden erfolgreich geladen.")
+else:
+    print("Warnung: Die .env-Datei wurde nicht gefunden. Bitte sicherstellen, dass sie im Verzeichnis vorhanden ist.")
+```
+
+Diese Datei sorgt dafür, dass die Umgebungsvariablen aus der `.env`-Datei geladen werden.
+
+### Schritt 4: Einrichten als Systemdienst
+
+Um den Bot als Systemdienst zu konfigurieren, erstelle eine Systemdienst-Datei.
+
+1. **Systemdienst-Datei erstellen**:
+
    ```bash
-   python main_bot.py
+   sudo nano /etc/systemd/system/telegram-escape-bot.service
    ```
 
-2. **Interaktion im Telegram-Chat**:
-   Der Bot wird Nachrichten in deinem Telegram-Chat empfangen und das Spiel beginnen, sobald die Teilnehmer einen Teamnamen festgelegt haben.
+2. **Inhalt der Dienstdatei**:
 
-## Anpassung
+   ```plaintext
+   [Unit]
+   Description=Telegram Escape Bot
+   After=network.target
 
-- **Eigene Rätsel hinzufügen**: Du kannst in der Datei `riddle_handler.py` eigene Rätsel und die dazugehörige Logik definieren. Die bestehende Struktur erleichtert es, die Rätsel an das gewünschte Escape-Spiel anzupassen.
-- **Abschlussbewertung**: Passe die Schlussnachricht oder das Abschlussszenario in der `rating_handler.py` an, um das Spiel je nach Verlauf individuell abzuschließen.
+   [Service]
+   WorkingDirectory=/pfad/zu/Telegram-Escape-Bot
+   ExecStart=/pfad/zu/Telegram-Escape-Bot/venv/bin/python main_bot.py
+   Restart=always
+   User=deinBenutzername
+   EnvironmentFile=/pfad/zu/Telegram-Escape-Bot/.env
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+   - **WorkingDirectory**: Ersetze `/pfad/zu/Telegram-Escape-Bot` mit dem tatsächlichen Pfad zu deinem Projektordner.
+   - **ExecStart**: Achte darauf, dass der Pfad zur Python-Umgebung und zur `main_bot.py` korrekt ist.
+   - **User**: Gib deinen Benutzernamen auf dem Server oder Raspberry Pi an.
+   - **EnvironmentFile**: Pfad zur `.env`-Datei.
+
+3. **Systemdienst laden und aktivieren**:
+
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable telegram-escape-bot
+   ```
+
+4. **Bot-Dienst starten**:
+
+   ```bash
+   sudo systemctl start telegram-escape-bot
+   ```
+
+### Schritt 5: Bot-Steuerung über `systemctl`
+
+- **Starten**: `sudo systemctl start telegram-escape-bot`
+- **Stoppen**: `sudo systemctl stop telegram-escape-bot`
+- **Neustarten**: `sudo systemctl restart telegram-escape-bot`
+- **Status prüfen**: `sudo systemctl status telegram-escape-bot`
+
+## Anpassung und Nutzung
+
+- **Eigene Rätsel hinzufügen**: Bearbeite die Datei `riddle_handler.py`, um eigene Rätsel hinzuzufügen.
+- **Abschlussbewertung anpassen**: Passe die Schlussnachricht in `rating_handler.py` an.
 
 ## Hinweise
 
-- **Hinweis- und Hilfefunktion**: Der Bot bietet zwei Optionen für Hinweise:
-  - **Automatisierte Hinweise**: Der Bot sendet automatisch Hinweise, wenn die Teilnehmer nach einer festgelegten Zeitspanne keine Lösung gefunden haben.
-  - **Manuelle Hinweise über den `/help`-Befehl**: Teilnehmer können selbst einen Hinweis anfordern, indem sie den Befehl `/help` verwenden.
-- **Sicherer Umgang mit dem Bot-Token**: Achte darauf, dass die `.env`-Datei in der `.gitignore` aufgelistet ist, um sicherzustellen, dass dein Bot-Token nicht versehentlich veröffentlicht wird.
-- **Modularer Aufbau**: Der Bot ist so aufgebaut, dass sich die Hauptfunktionen in verschiedenen Modulen befinden, was die Anpassung und Wartung erleichtert.
-- **Zeitmessung**: Der Bot misst die Zeit vom Start des Spiels bis zur Lösung des letzten Rätsels. Diese Zeit wird in der Abschlussevaluation angezeigt.
+- **Sicherer Umgang mit dem Bot-Token**: Stelle sicher, dass die `.env`-Datei nicht ins Repository hochgeladen wird. Füge sie zur `.gitignore` hinzu.
+- **Modularer Aufbau**: Der Bot ist modular aufgebaut, was die Anpassung erleichtert.
 
-## Beispiel für eine .gitignore-Datei
+## Beispiel für `.gitignore`
 
-Erstelle eine `.gitignore`-Datei im Hauptverzeichnis des Projekts mit folgendem Inhalt, um sicherzustellen, dass sensible Daten und unnötige Dateien nicht ins GitHub-Repository hochgeladen werden:
+Erstelle eine `.gitignore`-Datei im Hauptverzeichnis mit folgendem Inhalt:
 
 ```plaintext
 .env
+config.py
 __pycache__/
 *.pyc
 venv/
@@ -88,4 +150,4 @@ Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in d
 
 ---
 
-Viel Spaß beim Entwickeln deines eigenen Escape-Spiels mit dem Telegram Escape Bot! Falls du Fragen hast, wende dich gerne an den Repository-Entwickler.
+Mit dieser Anleitung läuft dein Bot als Systemdienst und lädt die Umgebungsvariablen über die `config.py`. Wenn du weitere Hilfe benötigst, stehe ich dir gerne zur Verfügung.
