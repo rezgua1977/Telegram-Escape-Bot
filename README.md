@@ -1,3 +1,4 @@
+
 # Telegram Escape Bot
 
 Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der Entwicklern die Möglichkeit gibt, ihre eigenen Rätsel und Inhalte hinzuzufügen. Dieser Bot stellt die Grundstruktur bereit, um Teilnehmer durch ein spannendes, interaktives Abenteuer zu führen.
@@ -22,4 +23,66 @@ Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der Entwicklern d
    ```bash
    git clone https://github.com/rezgua1977/Telegram-Escape-Bot.git
    cd Telegram-Escape-Bot
-"# Telegram-Escape-Bot" 
+   ```
+
+2. **Virtuelle Umgebung einrichten und aktivieren**:
+   Erstelle eine virtuelle Umgebung und aktiviere sie:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # Für Linux/macOS
+   venv\Scripts\activate      # Für Windows
+   ```
+
+3. **Abhängigkeiten installieren**:
+   Installiere die erforderlichen Python-Pakete:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Umgebungsvariablen konfigurieren**:
+   Erstelle eine `.env`-Datei im Projektordner und füge deinen Bot-Token hinzu:
+   ```plaintext
+   BOT_TOKEN=DeinBotTokenHier
+   ```
+   Ersetze `DeinBotTokenHier` durch den tatsächlichen Bot-Token, den du von BotFather erhalten hast.
+
+## Nutzung
+
+1. **Bot starten**:
+   Starte den Bot, indem du den folgenden Befehl im Terminal ausführst:
+   ```bash
+   python main_bot.py
+   ```
+
+2. **Interaktion im Telegram-Chat**:
+   Der Bot wird Nachrichten in deinem Telegram-Chat empfangen und das Spiel beginnen, sobald die Teilnehmer einen Teamnamen festgelegt haben.
+
+## Anpassung
+
+- **Eigene Rätsel hinzufügen**: Du kannst in der Datei `riddle_handler.py` eigene Rätsel und die dazugehörige Logik definieren. Die bestehende Struktur erleichtert es, die Rätsel an das gewünschte Escape-Spiel anzupassen.
+- **Abschlussbewertung**: Passe die Schlussnachricht oder das Abschlussszenario in der `rating_handler.py` an, um das Spiel je nach Verlauf individuell abzuschließen.
+
+## Hinweise
+
+- **Sicherer Umgang mit dem Bot-Token**: Achte darauf, dass die `.env`-Datei in der `.gitignore` aufgelistet ist, um sicherzustellen, dass dein Bot-Token nicht versehentlich veröffentlicht wird.
+- **Modularer Aufbau**: Der Bot ist so aufgebaut, dass sich die Hauptfunktionen in verschiedenen Modulen befinden, was die Anpassung und Wartung erleichtert.
+- **Zeitmessung**: Der Bot misst die Zeit vom Start des Spiels bis zur Lösung des letzten Rätsels. Diese Zeit wird in der Abschlussevaluation angezeigt.
+
+## Beispiel für eine .gitignore-Datei
+
+Erstelle eine `.gitignore`-Datei im Hauptverzeichnis des Projekts mit folgendem Inhalt, um sicherzustellen, dass sensible Daten und unnötige Dateien nicht ins GitHub-Repository hochgeladen werden:
+
+```plaintext
+.env
+__pycache__/
+*.pyc
+venv/
+```
+
+## Lizenz
+
+Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in der Datei `LICENSE`.
+
+---
+
+Viel Spaß beim Entwickeln deines eigenen Escape-Spiels mit dem Telegram Escape Bot! Falls du Fragen hast, wende dich gerne an den Repository-Entwickler.
