@@ -1,0 +1,9 @@
+#requirements.txt
+python-telegram-bot[job-queue]
+pylint
+flake8
+pytest
+python-dotenv
+httpx
+Pillow
+fpdf2
