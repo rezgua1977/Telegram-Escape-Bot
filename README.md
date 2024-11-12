@@ -7,7 +7,7 @@ Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der Entwicklern d
 
 - **Rätselverwaltung**: Eine einfache Struktur, um eigene Rätsel zu erstellen und zu integrieren.
 - **Teamnamen-Funktion**: Spieler können sich vor Spielbeginn einen Teamnamen geben.
-- **Hinweis- und Hilfefunktion**: Gibt den Spielern Unterstützung, wenn sie während des Spiels feststecken.
+- **Hinweis- und Hilfefunktion**: Der Bot kann den Spielern entweder automatisch nach einer festgelegten Zeitspanne Hinweise geben oder den Spielern auf Anfrage über den `/help`-Befehl helfen.
 - **Zeitmessung**: Misst die benötigte Zeit, um das Spiel abzuschließen, und zeigt die Gesamtdauer am Ende an.
 - **Abschlussevaluation**: Zeigt eine Zusammenfassung des Spiels mit Teamname, Spieldauer und anderen Details.
 
@@ -64,6 +64,9 @@ Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der Entwicklern d
 
 ## Hinweise
 
+- **Hinweis- und Hilfefunktion**: Der Bot bietet zwei Optionen für Hinweise:
+  - **Automatisierte Hinweise**: Der Bot sendet automatisch Hinweise, wenn die Teilnehmer nach einer festgelegten Zeitspanne keine Lösung gefunden haben.
+  - **Manuelle Hinweise über den `/help`-Befehl**: Teilnehmer können selbst einen Hinweis anfordern, indem sie den Befehl `/help` verwenden.
 - **Sicherer Umgang mit dem Bot-Token**: Achte darauf, dass die `.env`-Datei in der `.gitignore` aufgelistet ist, um sicherzustellen, dass dein Bot-Token nicht versehentlich veröffentlicht wird.
 - **Modularer Aufbau**: Der Bot ist so aufgebaut, dass sich die Hauptfunktionen in verschiedenen Modulen befinden, was die Anpassung und Wartung erleichtert.
 - **Zeitmessung**: Der Bot misst die Zeit vom Start des Spiels bis zur Lösung des letzten Rätsels. Diese Zeit wird in der Abschlussevaluation angezeigt.
