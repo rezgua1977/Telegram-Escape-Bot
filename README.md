@@ -82,7 +82,7 @@ Um den Bot als Systemdienst zu konfigurieren, erstelle eine Systemdienst-Datei.
 2. **Inhalt der Dienstdatei**:
 
    ```plaintext
-   [Unit]
+[Unit]
 Description=Telegram Escape Bot
 After=network.target
 
@@ -97,8 +97,7 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-
-   ```
+  ```
 
    - **WorkingDirectory**: Ersetze `/pfad/zu/Telegram-Escape-Bot` mit dem tatsächlichen Pfad zu deinem Projektordner.
    - **ExecStart**: Achte darauf, dass der Pfad zur Python-Umgebung und zur `main_bot.py` korrekt ist.
