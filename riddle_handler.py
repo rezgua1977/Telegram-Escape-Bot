@@ -154,7 +154,8 @@ async def handle_codeword_veritas(update: Update, context: CallbackContext) -> N
     # Sende Abschlussnachricht an den Spieler
     await update.message.reply_text(
         "🔑 <b>Ihr habt das Codewort 'Veritas' korrekt eingegeben!</b> 🔑\n\n"
-      
+      oder soll es für immer ruhen?\n\n"
+        f"{time_message}\n\n"
         "Vielen Dank für das Spielen! Möchtet ihr eine Bewertung abgeben? Gebt <b>/bewertung</b> ein.",
         parse_mode='HTML'
     )
