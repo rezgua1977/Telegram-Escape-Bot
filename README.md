@@ -83,18 +83,21 @@ Um den Bot als Systemdienst zu konfigurieren, erstelle eine Systemdienst-Datei.
 
    ```plaintext
    [Unit]
-   Description=Telegram Escape Bot
-   After=network.target
+Description=Telegram Escape Bot
+After=network.target
 
-   [Service]
-   WorkingDirectory=/pfad/zu/Telegram-Escape-Bot
-   ExecStart=/pfad/zu/Telegram-Escape-Bot/venv/bin/python main_bot.py
-   Restart=always
-   User=deinBenutzername
-   EnvironmentFile=/pfad/zu/Telegram-Escape-Bot/.env
+[Service]
+User=root
+WorkingDirectory=/root/telegram-escape-bot
+# Stellt die Zeitzone Europe/Berlin sicher
+Environment="TZ=Europe/Berlin"
+ExecStartPre=/bin/bash -c 'timedatectl set-timezone Europe/Berlin'
+ExecStart=/root/telegram-escape-bot/venv/bin/python /root/telegram-escape-bot/main_bot.py
+Restart=always
 
-   [Install]
-   WantedBy=multi-user.target
+[Install]
+WantedBy=multi-user.target
+
    ```
 
    - **WorkingDirectory**: Ersetze `/pfad/zu/Telegram-Escape-Bot` mit dem tatsächlichen Pfad zu deinem Projektordner.
