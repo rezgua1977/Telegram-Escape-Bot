@@ -43,7 +43,10 @@ Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der als Systemdie
 Erstelle eine `.env`-Datei im Projektordner und füge deinen Bot-Token hinzu:
 
 ```plaintext
-BOT_TOKEN=DeinBotTokenHier
+TOKEN=your_telegram_token
+EMAIL_USER=email-adress
+EMAIL_PASS=passwort
+RECIPIENT_EMAIL=sendmailadress
 ```
 
 Ersetze `DeinBotTokenHier` durch den tatsächlichen Token, den du von BotFather erhalten hast.
