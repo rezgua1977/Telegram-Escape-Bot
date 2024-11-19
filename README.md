@@ -1,158 +1,258 @@
 
 # Telegram Escape Bot
 
-Ein flexibler und anpassbarer Telegram-Bot für Escape-Spiele, der als Systemdienst eingerichtet werden kann. Der Bot läuft automatisch auf einem Server oder Raspberry Pi und lässt sich bequem über `systemctl` starten, stoppen und neustarten.
+Der **Telegram Escape Bot** ist ein interaktives Escape-Spiel, das direkt in Telegram gespielt werden kann. Spieler lösen Rätsel, um im Spiel voranzukommen, und erhalten Hinweise bei Bedarf. Der Bot ist vollständig anpassbar und einfach zu installieren.
 
-## Funktionen
+---
 
-- **Systemdienst-Steuerung**: Einfache Steuerung über `systemctl` für automatischen Start, Stop und Neustart des Bots.
-- **Rätselverwaltung**: Unterstützt die Erstellung und Verwaltung eigener Rätsel.
-- **Teamnamen-Funktion**: Die Spieler können vor Spielbeginn einen Teamnamen festlegen.
-- **Hinweis- und Hilfefunktion**: Der Bot kann automatische Hinweise nach einer festgelegten Zeitspanne senden oder den Spielern auf Anfrage über den `/help`-Befehl helfen.
-- **Zeitmessung und Abschlussevaluation**: Misst die Spieldauer und zeigt sie in einer abschließenden Zusammenfassung an.
+## 📥 Installation
 
-## Voraussetzungen
+### 1. Projekt herunterladen
+Öffne ein Terminal oder die Eingabeaufforderung und führe folgende Befehle aus:
+```bash
+git clone https://github.com/rezgua1977/Telegram-Escape-Bot.git
+cd telegram-escape-bot
+```
 
-- **Python 3.x**: Stelle sicher, dass Python 3.x auf deinem System installiert ist.
-- **Telegram-Bot API-Token**: Du benötigst einen Bot-Token, den du über [BotFather](https://t.me/botfather) auf Telegram erstellen kannst.
+### 2. Virtuelle Umgebung einrichten
+Erstelle und aktiviere eine virtuelle Umgebung, um Abhängigkeiten zu isolieren:
 
-## Installation
+- **Linux/macOS**:
+  ```bash
+  python3 -m venv venv
+  source venv/bin/activate
+  ```
 
-### Schritt 1: Repository klonen und virtuelle Umgebung einrichten
+- **Windows**:
+  ```bash
+  python -m venv venv
+  venv\Scripts\activate
+  ```
 
-1. **Repository klonen**:
-   ```bash
-   git clone https://github.com/rezgua1977/Telegram-Escape-Bot.git
-   cd Telegram-Escape-Bot
-   ```
+Installiere die Abhängigkeiten:
+```bash
+pip install -r requirements.txt
+```
 
-2. **Virtuelle Umgebung einrichten und aktivieren**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # Für Linux/macOS
-   venv\Scripts\activate      # Für Windows
-   ```
+### 3. Bot konfigurieren
+Erstelle eine `.env`-Datei, um sensible Daten wie den Bot-Token sicher zu speichern:
+```bash
+nano .env
+```
 
-3. **Abhängigkeiten installieren**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Schritt 2: Umgebungsvariablen konfigurieren
-
-Erstelle eine `.env`-Datei im Projektordner und füge deinen Bot-Token hinzu:
-
+Füge folgende Einträge hinzu:
 ```plaintext
-TOKEN=your_telegram_token
-EMAIL_USER=email-adress
-EMAIL_PASS=passwort
-RECIPIENT_EMAIL=sendmailadress
+TOKEN=dein_telegram_bot_token
+EMAIL_USER=deine_email_adresse
+EMAIL_PASS=dein_email_passwort
+RECIPIENT_EMAIL=empfaenger_email
 ```
 
-Ersetze `DeinBotTokenHier` durch den tatsächlichen Token, den du von BotFather erhalten hast.
+Speichere und verlasse die Datei.
 
-### Schritt 3: Konfigurationsdatei `config.py` erstellen
-
-Erstelle die Datei `config.py` im Hauptverzeichnis des Projekts mit folgendem Inhalt:
-
-```python
-import os
-from dotenv import load_dotenv
-
-# Definiere den Pfad zur .env-Datei und lade die Umgebungsvariablen
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-
-# Prüfe, ob die .env-Datei vorhanden ist und lade sie
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
-    print("Umgebungsvariablen wurden erfolgreich geladen.")
-else:
-    print("Warnung: Die .env-Datei wurde nicht gefunden. Bitte sicherstellen, dass sie im Verzeichnis vorhanden ist.")
+### 4. Testen des Bots
+Starte den Bot manuell:
+```bash
+python main_bot.py
 ```
 
-Diese Datei sorgt dafür, dass die Umgebungsvariablen aus der `.env`-Datei geladen werden.
+Sende eine Nachricht an den Bot, um sicherzustellen, dass er reagiert.
 
-### Schritt 4: Einrichten als Systemdienst
+---
 
-Um den Bot als Systemdienst zu konfigurieren, erstelle eine Systemdienst-Datei.
+## ⚙️ Einrichtung als Systemdienst
+Damit der Bot automatisch gestartet wird, wenn der Server hochfährt, richte ihn als Systemdienst ein.
 
-1. **Systemdienst-Datei erstellen**:
-
+1. Erstelle die Dienstdatei:
    ```bash
    sudo nano /etc/systemd/system/telegram-escape-bot.service
    ```
 
-2. **Inhalt der Dienstdatei**:
+2. Füge folgenden Inhalt hinzu:
+   ```plaintext
+   [Unit]
+   Description=Telegram Escape Bot
+   After=network.target
 
-```plaintext
-[Unit]
-Description=Telegram Escape Bot
-After=network.target
+   [Service]
+   User=root
+   WorkingDirectory=/root/telegram-escape-bot
+   Environment="TZ=Europe/Berlin"
+   ExecStart=/root/telegram-escape-bot/venv/bin/python /root/telegram-escape-bot/main_bot.py
+   Restart=always
 
-[Service]
-User=root
-WorkingDirectory=/root/telegram-escape-bot
-# Stellt die Zeitzone Europe/Berlin sicher
-Environment="TZ=Europe/Berlin"
-ExecStartPre=/bin/bash -c 'timedatectl set-timezone Europe/Berlin'
-ExecStart=/root/telegram-escape-bot/venv/bin/python /root/telegram-escape-bot/main_bot.py
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-   - **WorkingDirectory**: Ersetze `/pfad/zu/Telegram-Escape-Bot` mit dem tatsächlichen Pfad zu deinem Projektordner.
-   - **ExecStart**: Achte darauf, dass der Pfad zur Python-Umgebung und zur `main_bot.py` korrekt ist.
-   - **User**: Gib deinen Benutzernamen auf dem Server oder Raspberry Pi an.
-   - **EnvironmentFile**: Pfad zur `.env`-Datei.
-
-3. **Systemdienst laden und aktivieren**:
-
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable telegram-escape-bot
+   [Install]
+   WantedBy=multi-user.target
    ```
 
-4. **Bot-Dienst starten**:
+   **Hinweis:** Passe die Pfade zu deinem Projekt an.
 
+3. Lade die Systemdienste neu:
    ```bash
+   sudo systemctl daemon-reload
+   ```
+
+4. Aktiviere und starte den Dienst:
+   ```bash
+   sudo systemctl enable telegram-escape-bot
    sudo systemctl start telegram-escape-bot
    ```
 
-### Schritt 5: Bot-Steuerung über `systemctl`
-
-- **Starten**: `sudo systemctl start telegram-escape-bot`
-- **Stoppen**: `sudo systemctl stop telegram-escape-bot`
-- **Neustarten**: `sudo systemctl restart telegram-escape-bot`
-- **Status prüfen**: `sudo systemctl status telegram-escape-bot`
-
-## Anpassung und Nutzung
-
-- **Eigene Rätsel hinzufügen**: Bearbeite die Datei `riddle_handler.py`, um eigene Rätsel hinzuzufügen.
-- **Abschlussbewertung anpassen**: Passe die Schlussnachricht in `rating_handler.py` an.
-
-## Hinweise
-
-- **Sicherer Umgang mit dem Bot-Token**: Stelle sicher, dass die `.env`-Datei nicht ins Repository hochgeladen wird. Füge sie zur `.gitignore` hinzu.
-- **Modularer Aufbau**: Der Bot ist modular aufgebaut, was die Anpassung erleichtert.
-
-## Beispiel für `.gitignore`
-
-Erstelle eine `.gitignore`-Datei im Hauptverzeichnis mit folgendem Inhalt:
-
-```plaintext
-.env
-config.py
-__pycache__/
-*.pyc
-venv/
-```
-
-## Lizenz
-
-Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in der Datei `LICENSE`.
+5. Prüfe den Status:
+   ```bash
+   sudo systemctl status telegram-escape-bot
+   ```
 
 ---
 
-Mit dieser Anleitung läuft dein Bot als Systemdienst und lädt die Umgebungsvariablen über die `config.py`. Wenn du weitere Hilfe benötigst, stehe ich dir gerne zur Verfügung.
+## 🛠 Anpassung und Nutzung
+
+### Rätsel bearbeiten mit `riddle_handler.py`
+
+Die Datei `riddle_handler.py` ist der zentrale Ort, an dem die Rätsel und Lösungen definiert sind. Hier kannst du die Logik für jedes Rätsel individuell anpassen.
+
+#### Rätsellösungen definieren
+Die Lösungen für die Rätsel werden in einem Dictionary gespeichert:
+```python
+solutions = {
+    1: "Lösung",
+    2: "Lösung",
+    3: "Lösung",
+    4: "Lösung",
+    5: "Lösung",
+    6: ["Lösung", "Lösungn"],
+    7: "veritas"
+}
+```
+
+- Der Schlüssel (`1`, `2`, etc.) entspricht der Rätselnummer.
+- Der Wert ist die richtige Antwort. Es kann sich um einen String oder eine Liste handeln, wenn mehrere Antworten erlaubt sind.
+
+#### Hinweise hinzufügen
+Die Funktion `get_hint_text` liefert die Hinweise für jedes Rätsel:
+```python
+def get_hint_text(riddle_number):
+    hints = {
+        1: "Der Code ist versteckt.",
+        2: "Die Zahlen hängen mit den Objekten im Raum zusammen.",
+        3: "Achte auf die Anfangsbuchstaben im Text.",
+        4: "Die Glyphen auf dem Bild ergeben eine Zahl.",
+        5: "Das Buch enthält den Schlüssel zum Geheimnis.",
+    }
+    return hints.get(riddle_number, "Kein Hinweis verfügbar.")
+```
+
+- Füge neue Hinweise für deine Rätsel hinzu, indem du das `hints`-Dictionary erweiterst.
+- Achte darauf, dass die Schlüssel mit den Rätselnummern übereinstimmen.
+
+#### Rätselbeschreibung anpassen
+Jedes Rätsel kann eine eigene Beschreibung haben, die den Spielern angezeigt wird:
+```python
+def get_riddle_description(riddle_number):
+    descriptions = {
+        1: "Das erste Rätsel führt euch in die Geheimnisse.",
+        2: "Findet die verborgene Zahl.",
+        3: "Ein altes Buch verbirgt den nächsten Hinweis.",
+        4: "Schaut euch das Bild mit den Glyphen genauer an.",
+        5: "Löst das Rätsel, um voranzukommen.",
+    }
+    return descriptions.get(riddle_number, "Beschreibung fehlt.")
+```
+
+#### Neue Rätsel hinzufügen
+Wenn du neue Rätsel hinzufügen möchtest:
+1. Füge die Lösung im `solutions`-Dictionary hinzu.
+2. Ergänze die Beschreibung in `get_riddle_description`.
+3. Definiere optional Hinweise in `get_hint_text`.
+
+#### Beispiel für ein neues Rätsel
+```python
+solutions[8] = "neuer_code"
+def get_hint_text(riddle_number):
+    hints = {
+        # vorherige Hinweise ...
+        8: "Schau dir die alte Karte genau an."
+    }
+    return hints.get(riddle_number, "Kein Hinweis verfügbar.")
+
+def get_riddle_description(riddle_number):
+    descriptions = {
+        # vorherige Beschreibungen ...
+        8: "Ein versteckter Ort hält den Schlüssel zum nächsten Schritt."
+    }
+    return descriptions.get(riddle_number, "Beschreibung fehlt.")
+```
+
+---
+
+## 📋 Nützliche Befehle
+
+- **Bot starten**:  
+  ```bash
+  sudo systemctl start telegram-escape-bot
+  ```
+
+- **Bot stoppen**:  
+  ```bash
+  sudo systemctl stop telegram-escape-bot
+  ```
+
+- **Bot neu starten**:  
+  ```bash
+  sudo systemctl restart telegram-escape-bot
+  ```
+
+- **Logs anzeigen**:  
+  ```bash
+  sudo journalctl -u telegram-escape-bot
+  ```
+
+---
+
+## ❓ Fehlerbehebung
+
+- **Bot reagiert nicht**:
+  Stelle sicher, dass der Dienst läuft:
+  ```bash
+  sudo systemctl status telegram-escape-bot
+  ```
+  Prüfe die Logs:
+  ```bash
+  sudo journalctl -u telegram-escape-bot
+  ```
+
+- **Fehlende Abhängigkeiten**:
+  Installiere die Pakete erneut:
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+- **Probleme mit Zeitzonen**:
+  Stelle sicher, dass die Zeitzone korrekt eingestellt ist:
+  ```bash
+  timedatectl set-timezone Europe/Berlin
+  ```
+
+---
+
+## 🌟 Hilfreiche Tipps
+
+- **Lerne Git**: Speichere Änderungen mit Git und GitHub:
+  ```bash
+  git add .
+  git commit -m "Erste Version des Bots"
+  git push origin main
+  ```
+
+- **Nutze virtuelle Umgebungen**: Verhindere Konflikte zwischen Python-Paketen.
+
+- **Frage um Hilfe**: Nutze Plattformen wie Stack Overflow oder GitHub Discussions.
+
+---
+
+## 📝 Lizenz
+Dieses Projekt steht unter der [MIT-Lizenz](LICENSE). Du kannst es frei verwenden, anpassen und teilen.
+
+---
+
+Viel Erfolg mit deinem Telegram Escape Bot! 🎉
