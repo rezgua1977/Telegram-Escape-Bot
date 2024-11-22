@@ -115,14 +115,16 @@ Die Datei `riddle_handler.py` ist der zentrale Ort, an dem die Rätsel und Lösu
 Die Lösungen für die Rätsel werden in einem Dictionary gespeichert:
 ```python
 solutions = {
-    1: "Lösung",
-    2: "Lösung",
-    3: "Lösung",
-    4: "Lösung",
-    5: "Lösung",
-    6: ["Lösung", "Lösungn"],
-    7: "veritas"
+    1: ["lösung1"],
+    2: ["lösung2"],
+    3: ["lösung3"],
+    4: ["lösung4"],
+    5: ["lösung5"],
+    6: ["lösung6"],
+    7: ["lösung7"],
+    8: ["lösung8"]
 }
+
 ```
 
 - Der Schlüssel (`1`, `2`, etc.) entspricht der Rätselnummer.
@@ -133,13 +135,17 @@ Die Funktion `get_hint_text` liefert die Hinweise für jedes Rätsel:
 ```python
 def get_hint_text(riddle_number):
     hints = {
-        1: "Der Code ist versteckt.",
-        2: "Die Zahlen hängen mit den Objekten im Raum zusammen.",
-        3: "Achte auf die Anfangsbuchstaben im Text.",
-        4: "Die Glyphen auf dem Bild ergeben eine Zahl.",
-        5: "Das Buch enthält den Schlüssel zum Geheimnis.",
+        1: "Hinweis für Rätsel 1.",
+        2: "Hinweis für Rätsel 2.",
+        3: "Hinweis für Rätsel 3.",
+        4: "Hinweis für Rätsel 4.",
+        5: "Hinweis für Rätsel 5.",
+        6: "Hinweis für Rätsel 6.",
+        7: "Hinweis für Rätsel 7.",
+        8: "Hinweis für Rätsel 8."
     }
     return hints.get(riddle_number, "Kein Hinweis verfügbar.")
+
 ```
 
 - Füge neue Hinweise für deine Rätsel hinzu, indem du das `hints`-Dictionary erweiterst.
@@ -150,13 +156,18 @@ Jedes Rätsel kann eine eigene Beschreibung haben, die den Spielern angezeigt wi
 ```python
 def get_riddle_description(riddle_number):
     descriptions = {
-        1: "Das erste Rätsel führt euch in die Geheimnisse.",
-        2: "Findet die verborgene Zahl.",
-        3: "Ein altes Buch verbirgt den nächsten Hinweis.",
-        4: "Schaut euch das Bild mit den Glyphen genauer an.",
-        5: "Löst das Rätsel, um voranzukommen.",
+        1: "Beschreibung für Rätsel 1.",
+        2: "Beschreibung für Rätsel 2.",
+        3: "Beschreibung für Rätsel 3.",
+        4: "Beschreibung für Rätsel 4.",
+        5: "Beschreibung für Rätsel 5.",
+        6: "Beschreibung für Rätsel 6.",
+        7: "Beschreibung für Rätsel 7.",
+        8: "Beschreibung für Rätsel 8."
     }
     return descriptions.get(riddle_number, "Beschreibung fehlt.")
+
+
 ```
 
 #### Neue Rätsel hinzufügen
@@ -167,20 +178,21 @@ Wenn du neue Rätsel hinzufügen möchtest:
 
 #### Beispiel für ein neues Rätsel
 ```python
-solutions[8] = "neuer_code"
+solutions[9] = "neue_lösung"
 def get_hint_text(riddle_number):
     hints = {
         # vorherige Hinweise ...
-        8: "Schau dir die alte Karte genau an."
+        9: "Hinweis für Rätsel 9."
     }
     return hints.get(riddle_number, "Kein Hinweis verfügbar.")
 
 def get_riddle_description(riddle_number):
     descriptions = {
         # vorherige Beschreibungen ...
-        8: "Ein versteckter Ort hält den Schlüssel zum nächsten Schritt."
+        9: "Beschreibung für Rätsel 9."
     }
     return descriptions.get(riddle_number, "Beschreibung fehlt.")
+
 ```
 
 ---
