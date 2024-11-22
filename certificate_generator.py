@@ -1,3 +1,4 @@
+#certificate_generator.py
 import os
 import tempfile
 from fpdf import FPDF
@@ -15,29 +16,17 @@ def generate_certificate(team_name, game_duration):
 
     # Pfade für Bild und Schriftarten
     image_path = os.path.join(os.path.dirname(__file__), "Bilder", "Titelkarte.jpg")
-    liberationsans_regular = os.path.join(os.path.dirname(__file__), "Schriftart", "LiberationSans-Regular.ttf")
-    liberationsans_bold = os.path.join(os.path.dirname(__file__), "Schriftart", "LiberationSans-Bold.ttf")
-    dejavusans_path = os.path.join(os.path.dirname(__file__), "Schriftart", "DejaVuSans.ttf")
     signature_path = os.path.join(os.path.dirname(__file__), "Bilder", "Signatur.png")
-    stamp_path = os.path.join(os.path.dirname(__file__), "Bilder", "stempel.png")
+    stamp_path = os.path.join(os.path.dirname(__file__), "Bilder", "Stempel.png")
 
     # Titelkarte hinzufügen und Abstand nach unten schaffen
     if os.path.exists(image_path):
         pdf.image(image_path, x=10, y=10, w=190)
         pdf.ln(93)
 
-    # Liberation Sans und DejaVu Sans Schriftarten hinzufügen
-    if os.path.exists(liberationsans_regular):
-        pdf.add_font("LiberationSans", "", liberationsans_regular, uni=True)
-    if os.path.exists(liberationsans_bold):
-        pdf.add_font("LiberationSans", "B", liberationsans_bold, uni=True)
-    if os.path.exists(dejavusans_path):
-        pdf.add_font("DejaVuSans", "", dejavusans_path, uni=True)
-
-    # Wasserzeichen in DejaVu Sans
-    pdf.set_font("DejaVuSans", "", 50)
-    pdf.set_text_color(200, 200, 200)
-    pdf.text(30, 150, "✵ ✧ ✪ ✫ ✬ ✯ ✰")
+    # Standard-Schriftarten hinzufügen
+    pdf.add_font("Arial", "", os.path.join(os.path.dirname(__file__), "Schriftarten", "arial.ttf"), uni=True)
+    pdf.add_font("Arial", "B", os.path.join(os.path.dirname(__file__), "Schriftarten", "arialbd.ttf"), uni=True)
 
     # Rahmen
     pdf.set_draw_color(100, 50, 30)
@@ -45,35 +34,33 @@ def generate_certificate(team_name, game_duration):
     pdf.rect(10, 10, 190, 277)
 
     # Titel weiter unterhalb des Bildes platzieren
-    pdf.set_font("LiberationSans", "B", 22)
+    pdf.set_font("Arial", "B", 22)
     pdf.set_text_color(212, 175, 55)  # Goldton
-    pdf.cell(0, 40, " Rätsel der ", 0, 1, "C")
+    pdf.cell(0, 40, "Zertifikat", 0, 1, "C")
     pdf.ln(8)
 
     # Einführungstext im "Blocksatz"
-    pdf.set_font("LiberationSans", "", 12)
+    pdf.set_font("Arial", "", 12)
     pdf.set_text_color(34, 34, 34)
     intro_text = (
-        "gelüftet. "
-        "der "
-        " aufgedeckt.\n"
+        "Herzlichen Glückwunsch! Sie haben das Spiel erfolgreich abgeschlossen.\n"
+        "Wir gratulieren Ihnen zu Ihrer herausragenden Leistung und Ihrem scharfsinnigen Denken.\n"
     )
     pdf.multi_cell(190, 7, intro_text)
     pdf.ln(3)
 
     # Teamname und Dauer
-    pdf.set_font("LiberationSans", "B", 14)
+    pdf.set_font("Arial", "B", 14)
     pdf.cell(0, 10, f"Herzlichen Glückwunsch, Team {team_name}!", 0, 1, "C")
-    pdf.set_font("LiberationSans", "", 12)
-    pdf.cell(0, 10, f"Ihr habt das Spiel in {game_duration} gelöst.", 0, 1, "C")
+    pdf.set_font("Arial", "", 12)
+    pdf.cell(0, 10, f"Sie haben das Spiel in {game_duration} abgeschlossen.", 0, 1, "C")
     pdf.ln(6)
 
     # Abschlussnachricht im "Blocksatz"
     closing_text = (
-        "Vielen Dank für die Teilnahme an  das Rätsel '.\n"
-        " verborgen bleiben... Doch ihr habt bewiesen, dass selbst die tiefsten Rätsel "
-        "nicht unlösbar sind, wenn man Mut und Klugheit besitzt.\n"
-        "Ihr seid nun Teil einer kleinen Gruppe, "
+        "Vielen Dank für die Teilnahme an diesem Spiel.\n"
+        "Wir hoffen, dass Sie viel Spaß hatten und freuen uns darauf, Sie bei zukünftigen Abenteuern wiederzusehen.\n"
+        "Möge Ihr Erfolg Sie weiterhin begleiten.\n"
     )
     pdf.multi_cell(190, 7, closing_text)
     pdf.ln(6)
@@ -88,7 +75,7 @@ def generate_certificate(team_name, game_duration):
     current_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     pdf.set_y(265)
     pdf.set_x(0)
-    pdf.set_font("LiberationSans", "", 10)
+    pdf.set_font("Arial", "", 10)
     pdf.cell(0, 10, f"Abgeschlossen am {current_time}", 0, 1, "C")
 
     # Speichern des PDFs
@@ -97,3 +84,4 @@ def generate_certificate(team_name, game_duration):
     pdf.output(file_path)
 
     return file_path
+
