@@ -36,17 +36,17 @@ async def confirm_reset(update: Update, context: CallbackContext) -> None:
             else:
                 logger.error(f"Bild {TITLECARD_PATH} nicht gefunden.")
                 await context.bot.send_message(chat_id=chat_id, text="🔔 Die Einführung wird ohne Titelbild fortgesetzt.")
-            
+
             # Begrüßungsnachricht und Abfrage des Teamnamens senden
             await context.bot.send_message(
                 chat_id=chat_id,
                 text=(
-                    "✨ <b>Willkommen im Rätsel möchten gelöst, nicht alle Türen geöffnet werden.</b>\n\n"
-                    "📜 <b>Wichtige Hinweise für eure Reise:</b>\n"
-                    "1. <b>Teamname festlegen</b>: Gebt <i>euren geheimen Teamnamen ohne das Wort Team</i> ein, um das Tor in die Welt der Illusionen zu öffnen.\n"
-                    "2. <b>Ruft nach Unterstützung</b>: Gebt <code>/help</code> ein, falls die Dunkelheit euch überwältigen sollte.\n"
-                    "3. <b>Zurücksetzen</b>: Gebt <code>/reset</code> ein, um das Abenteuer von Neuem zu beginnen, solltet ihr im Labyrinth der Geheimnisse verloren gehen.\n\n"
-                    "✨ <b>Möge das Schicksal euch wohlgesonnen sein</b> und euch durch die Nebel der Ungewissheit führen. <b>Viel Erfolg auf eurer Reise ins Unbekannte!</b> ✨"
+                    "Willkommen zum Spiel!\n\n"
+                    "Hier sind einige wichtige Hinweise für deine Reise:\n"
+                    "1. <b>Teamname festlegen</b>: Gib deinen Teamnamen ein, um das Abenteuer zu beginnen.\n"
+                    "2. <b>Hilfe rufen</b>: Gib <b>/help</b> ein, falls du auf deiner Reise Unterstützung benötigst.\n"
+                    "3. <b>Zurücksetzen</b>: Gib <b>/reset</b> ein, um das Abenteuer von Neuem zu starten, sollte dir der Weg verloren gehen.\n\n"
+                    "Viel Erfolg auf deiner Reise!"
                 ),
                 parse_mode="HTML"
             )
@@ -65,7 +65,7 @@ async def reset(update: Update, context: CallbackContext) -> None:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        "⚠️ Bist du sicher, dass du deinen Fortschritt zurücksetzen möchtest?",
+        "Bist du sicher, dass du deinen Fortschritt zurücksetzen möchtest?",
         reply_markup=reply_markup,
     )
     logger.info("Reset-Bestätigungsdialog angezeigt.")
@@ -74,5 +74,5 @@ async def reset(update: Update, context: CallbackContext) -> None:
 async def cancel_reset(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     await query.answer()
-    await query.edit_message_text("🔙 Spielstand bleibt erhalten. Weiter geht's!")
+    await query.edit_message_text("Spielstand bleibt erhalten. Weiter geht's!")
     logger.info("Reset-Abbruch durch den Benutzer bestätigt.")
